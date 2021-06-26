@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ru">
+    <head>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="css/index.css" />
+        <title>База данных EgoDB</title>
+    </head>
+    <body>
+        <div class="halfWidth">
+            <h1 class="title" >EgoDB</h1>
+        </div>
+        <button id="search_clear_btn">Очистить поиск</button>
+        <label><input type="text" multiply id="search_list" list="id_list" autocomplete="off"></label>
+        <button id="search_btn">Вперёд!!</button>
+        <datalist id="id_list">
+        </datalist>
+        <table id="data_table">
+            <tr>
+                <th class="prop">Название свойства</th>
+                <th>Значение</th>
+            </tr>
+            <tr>
+                <td>Название компании</td>
+                <td id="comp_name" ></td>
+            </tr>
+            <tr>
+                <td>ИНН</td>
+                <td id="comp_inn" ></td>
+            </tr>
+            <tr>
+                <td>Номер договра</td>
+                <td id="dog_number"></td>
+            </tr>
+            <tr>
+                <td>Статус договора</td>
+                <td id="dog_state" ></td>
+            </tr>
+            <tr>
+                <td>Дата договора</td>
+                <td id="dog_date" ></td>
+            </tr>
+            <tr>
+                <td>Файлы</td>
+                <td id="files"></td>
+            </tr>
+            <tr>
+                <td>Коментарий</td>
+                <td id="dog_comment" >Блаааа</td>
+            </tr>
+            <tr>
+                <td colspan="2"><button id="table_edit_btn"><button id="stop_edit_btn"></button></td>
+            </tr>
+        </table>
+        <script src="js/index.js"></script>
+    </body>
+</html>

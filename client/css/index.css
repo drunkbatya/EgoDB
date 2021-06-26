@@ -1,0 +1,39 @@
+body {
+/*	background-color: #232627;
+	color: white;
+*/
+    background: buttonface;
+}
+.title {
+	text-align: center;
+}
+.halfWidth {
+	width: 50%;
+}
+#data_table{
+	border: 1px solid #1d99f3;
+	width: 50%;
+	float: right;
+}
+
+#data_table > tbody > tr > td {
+	border: 1px solid #1cdc9a;
+}
+
+#data_table > tbody > tr > th.prop {
+	width: 20%;
+}
+
+#search_list {
+	width: 25%;
+}
+
+.data_table_input {
+    width: 99%;
+}
+#table_edit_btn {
+    float: right;
+}
+#stop_edit_btn {
+    float: right;
+}
