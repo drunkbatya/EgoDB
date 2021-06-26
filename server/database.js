@@ -36,9 +36,19 @@ const updateData = (request, response) => {
             if (error) {
                 throw error
             }
-            response.status(200).json("Success");
+            response.status(200).json("Операция выполнена успешно!");
         }
     );
+}
+
+const deleteData = (request, response) => {
+    const id = parseInt(request.params.id);
+    pool.query('DELETE FROM data WHERE id = $1', [id] , (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).json("Операция выполнена успешно!")
+    })
 }
 
 function getUsersSecret() {
@@ -53,4 +63,5 @@ module.exports = {
     getAllData,
     getAllById,
     updateData,
+    deleteData,
 }

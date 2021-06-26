@@ -37,3 +37,7 @@ body {
 #stop_edit_btn {
     float: right;
 }
+#delete_btn {
+    float: left;
+    color: red;
+}

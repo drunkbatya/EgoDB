@@ -12,8 +12,7 @@
         <button id="search_clear_btn">Очистить поиск</button>
         <label><input type="text" multiply id="search_list" list="id_list" autocomplete="off"></label>
         <button id="search_btn">Вперёд!!</button>
-        <datalist id="id_list">
-        </datalist>
+        <datalist id="id_list"></datalist>
         <table id="data_table">
             <tr>
                 <th class="prop">Название свойства</th>
@@ -48,7 +47,11 @@
                 <td id="dog_comment" >Блаааа</td>
             </tr>
             <tr>
-                <td colspan="2"><button id="table_edit_btn"><button id="stop_edit_btn"></button></td>
+                <td colspan="2">
+                    <button id="delete_btn"></button>
+                    <button id="table_edit_btn"></button>
+                    <button id="stop_edit_btn"></button>
+                </td>
             </tr>
         </table>
         <script src="js/index.js"></script>
