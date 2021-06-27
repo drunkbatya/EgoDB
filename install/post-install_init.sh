@@ -12,9 +12,9 @@ PASS="9XbMW3flIO0B0FYr8R5y";
 HOST="localhost";
 PORT="5432";
 
-#echo "CREATE DATABASE $DB_NAME" | postgres_psql;
-#echo "CREATE USER $USER WITH ENCRYPTED PASSWORD '$PASS'" | postgres_psql;
-#echo "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $USER" | postgres_psql;
+echo "CREATE DATABASE $DB_NAME" | postgres_psql;
+echo "CREATE USER $USER WITH ENCRYPTED PASSWORD '$PASS'" | postgres_psql;
+echo "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $USER" | postgres_psql;
 
 TEST=$(echo "SELECT 1" | psql "postgresql://$USER:$PASS@$HOST:$PORT/$DB_NAME" 2>&1| sed "s/ //g" | grep "^[0-9]" || true);
 if [[ -z $TEST ]];then
