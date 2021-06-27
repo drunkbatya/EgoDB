@@ -9,6 +9,7 @@ var data_table = document.getElementById("data_table");
 var table_edit_btn = document.getElementById("table_edit_btn");
 var stop_edit_btn = document.getElementById("stop_edit_btn");
 var delete_btn = document.getElementById("delete_btn");
+var add_btn = document.getElementById("add_btn");
 //accessing table elements
 var table_elements = [];
 table_elements[0] = document.getElementById("comp_name");
@@ -63,6 +64,20 @@ function backendPut(url, array) {
 	});
 }
 
+function backendPost(url, array) {
+	var req = new XMLHttpRequest();
+	return new Promise(function(resolve, reject) {
+		req.onload = function() {
+	        var resp = JSON.parse(req.responseText);
+			resolve(resp);
+		}
+		req.open('POST', url, true);
+        req.setRequestHeader('Content-type','application/json; charset=utf-8');
+        var json = JSON.stringify(array);
+		req.send(json);
+	});
+}
+
 function setup(e) {
 	//LISTNERS
 	search_btn.addEventListener('click', searchGet, false);
@@ -70,6 +85,7 @@ function setup(e) {
 	search_list.addEventListener('click', placeholderChange, false);
 	delete_btn.addEventListener('click', deleteData, false);
 	search_list.addEventListener('blur', placeholderSet, false);
+	add_btn.addEventListener('click', tableAddData, false);
 	//LISTNERS_END
 	placeholderSet();
 	data_table.style.visibility = 'hidden';
@@ -84,6 +100,8 @@ function searchClear(e) {
 	data_table.style.visibility = 'hidden';
     delete_btn.style.visibility = 'hidden';
     stop_edit_btn.style.visibility = 'hidden';
+    disableSearchElements(false);
+    add_btn.disabled=false;
 }
 
 function placeholderSet(e) {
@@ -109,7 +127,6 @@ function tableClear() {
 async function searchGet(e) {
     tableClear();
     stop_edit_btn.style.visibility = "hidden";
-    disableSearchElements(false);
 	var search_query = search_list.value;	
 	if (!search_query) {
 		alert("Введите поисковый запрос!");
@@ -126,6 +143,8 @@ async function searchGet(e) {
         alert("В базе данных отсутствуюет то, что вы ищете");
         return;
     }
+    disableSearchElements(false);
+    add_btn.disabled=true;
     ans = ans[0];
     // updating from DB data
     table_elements[0].innerHTML = ans.comp_name;
@@ -134,20 +153,23 @@ async function searchGet(e) {
     table_elements[3].innerHTML = ans.dog_date;
     table_elements[4].innerHTML = ans.dog_state;
     table_elements[5].innerHTML = ans.dog_comment;
-    table_edit_btn.removeEventListener('click', editData, false);
+    //
+    removeAllEventListeners();
     table_edit_btn.innerHTML = "Редактировать";
     table_edit_btn.addEventListener('click', tableEdit, false);
-    for (i=0; i < ans.files.length; i++) {
-        var link = document.createElement("a");
-        var brr = document.createElement("br");
-        //var name = ans.files[i].match(/\/(\w+.\w+)$/);
-        var name = ans.files[i].match(/\/([^\/]+)$/);
-        if (name) {
-            // regexp will cut file path to file name; name[1] will print regexp group in ();
-            link.innerHTML = name[1];
-            link.href = ans.files[i];
-            files_table.appendChild(link);
-            files_table.appendChild(brr);
+    if (ans.files) {
+        for (i=0; i < ans.files.length; i++) {
+            var link = document.createElement("a");
+            var brr = document.createElement("br");
+            //var name = ans.files[i].match(/\/(\w+.\w+)$/);
+            var name = ans.files[i].match(/\/([^\/]+)$/);
+            if (name) {
+                // regexp will cut file path to file name; name[1] will print regexp group in ();
+                link.innerHTML = name[1];
+                link.href = ans.files[i];
+                files_table.appendChild(link);
+                files_table.appendChild(brr);
+            }
         }
     }
     data_table.style.visibility = 'visible';
@@ -157,6 +179,16 @@ async function searchGet(e) {
 function tableEdit() {
     disableSearchElements(true);
     delete_btn.style.visibility = 'hidden';
+    convertTableTextToInput();
+    removeAllEventListeners();
+    table_edit_btn.innerHTML = "Сохранить";
+    table_edit_btn.addEventListener('click', editData, false);
+    stop_edit_btn.innerHTML = "Отмена";
+    stop_edit_btn.addEventListener('click', searchGet, false);
+    stop_edit_btn.style.visibility = 'visible';
+}
+
+function convertTableTextToInput() {
     for (var i = 0; i<table_elements.length; i++) {
         var inputElement = document.createElement("input");
         inputElement.type = "text";
@@ -165,13 +197,6 @@ function tableEdit() {
         table_elements[i].innerHTML = "";
         table_elements[i].appendChild(inputElement);
     }
-    table_edit_btn.removeEventListener('click', tableEdit, false);
-    table_edit_btn.innerHTML = "Сохранить";
-    table_edit_btn.addEventListener('click', editData, false);
-    //stop_edit_btn.removeEventListener('click', tableEdit, false);
-    stop_edit_btn.innerHTML = "Отмена";
-    stop_edit_btn.addEventListener('click', searchGet, false);
-    stop_edit_btn.style.visibility = 'visible';
 }
 
 async function editData() {
@@ -198,6 +223,40 @@ async function deleteData() {
     getList();
 }
 
+function tableAddData() {
+    removeAllEventListeners();
+    disableSearchElements(true);
+    add_btn.disabled=true;
+    delete_btn.style.visibility = 'hidden';
+    data_table.style.visibility = 'visible';
+    table_edit_btn.innerHTML = "Сохранить";
+    table_edit_btn.addEventListener('click', addData, false);
+    stop_edit_btn.innerHTML = "Отмена";
+    stop_edit_btn.addEventListener('click', searchClear, false);
+    stop_edit_btn.style.visibility = 'visible';
+    tableClear();
+    convertTableTextToInput();
+
+}
+async function addData() {    
+    var array = [];
+    for (var i = 0; i<table_elements.length; i++) {
+        array[i] = table_elements[i].lastElementChild.value;
+    }
+    var resp = await backendPost('/server', array);
+    alert(resp);
+    searchClear();
+    getList();
+}
+function removeAllEventListeners() {
+    //[ENG] Fuck.. in JS, i can't remove all event listeners.. 
+    //[RUS] Да.. Ебать его рот.. Втянули меня в какую-то хуйню..
+    stop_edit_btn.removeEventListener('click', searchGet, false);
+    table_edit_btn.removeEventListener('click', addData, false);
+    table_edit_btn.removeEventListener('click', editData, false);
+    table_edit_btn.removeEventListener('click', tableEdit, false);
+    stop_edit_btn.removeEventListener('click', searchClear, false);
+}
 async function getList() {
 	var resp = await backendGet('/server');
     while (id_list.firstChild) {

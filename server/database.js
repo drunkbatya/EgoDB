@@ -51,6 +51,17 @@ const deleteData = (request, response) => {
     })
 }
 
+const addData = (request, response) => {
+    const ans = request.body; // just for length
+    console.log(ans);
+    pool.query('INSERT INTO data (comp_name, comp_inn, dog_number, dog_date, dog_state, dog_comment) VALUES ($1, $2, $3, $4, $5, $6)', ans, (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).json("Операция выполнена успешно!");
+    });
+}
+
 function getUsersSecret() {
     return new Promise(resolve => {
         var dbResp = pool.query('SELECT username,password FROM users');
@@ -64,4 +75,5 @@ module.exports = {
     getAllById,
     updateData,
     deleteData,
+    addData,
 }

@@ -32,6 +32,7 @@ app.get('/server', db.getAllData);
 app.get('/server/:id', db.getAllById);
 app.put('/server/:id', db.updateData);
 app.delete('/server/:id', db.deleteData);
+app.post('/server', db.addData);
 
 //app.get('/login', function(req, res){
 //    res.sendFile(ROOT+'client/login.html');

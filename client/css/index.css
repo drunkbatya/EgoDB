@@ -41,3 +41,6 @@ body {
     float: left;
     color: red;
 }
+#add_btn {
+    margin-left: 14%;
+}
