@@ -1,9 +1,10 @@
-const express = require('express')
-const basicAuth = require('express-basic-auth')
-const bodyParser = require('body-parser')
-const app = express()
-const port = 80
-const db = require('./database')
+const express = require('express');
+const morgan = require('morgan');
+const basicAuth = require('express-basic-auth');
+const bodyParser = require('body-parser');
+const app = express();
+const port = 80;
+const db = require('./database');
 const ROOT = "/home/mandreev/EgoDB/";
 
 app.use(basicAuth({
@@ -13,7 +14,8 @@ app.use(basicAuth({
     unauthorizedResponse: getUnauthorizedResponse,
 }));
 
-app.use(bodyParser.json())
+app.use(bodyParser.json());
+app.use(morgan('combined'));
 
 app.use(
     bodyParser.urlencoded({

@@ -90,7 +90,7 @@ function setup(e) {
 	placeholderSet();
 	data_table.style.visibility = 'hidden';
     stop_edit_btn.innerHTML = "Отмена";
-    delete_btn.innerHTML = "Удалить запись";
+    delete_btn.innerHTML = "Удалить документ";
 	getList();
     disableSearchElements(false);
 }
@@ -124,6 +124,12 @@ function tableClear() {
     }
 }
 
+function convertDate(inp) {
+    inp = inp.split("-");
+    inp = inp[2]+"-"+inp[1]+"-"+inp[0];
+    return inp;
+}
+
 async function searchGet(e) {
     tableClear();
     stop_edit_btn.style.visibility = "hidden";
@@ -146,6 +152,9 @@ async function searchGet(e) {
     disableSearchElements(false);
     add_btn.disabled=true;
     ans = ans[0];
+    // converting date from "2021-01-04T00:00:00.000Z" to "2021-01-04"
+    ans.dog_date = ans.dog_date.match(/\d{4}-\d{2}-\d{2}/g);
+    ans.dog_date = convertDate(ans.dog_date[0]);
     // updating from DB data
     table_elements[0].innerHTML = ans.comp_name;
     table_elements[1].innerHTML = ans.comp_inn;
@@ -191,9 +200,16 @@ function tableEdit() {
 function convertTableTextToInput() {
     for (var i = 0; i<table_elements.length; i++) {
         var inputElement = document.createElement("input");
-        inputElement.type = "text";
-        inputElement.className = "data_table_input";
-        inputElement.value = table_elements[i].innerHTML;
+        if (table_elements[i].id == "dog_date") {
+            inputElement.type = "date";
+            inputElement.required = true;
+            inputElement.value = convertDate(table_elements[i].innerHTML);
+        }
+        else {
+            inputElement.type = "text";
+            inputElement.className = "data_table_input";
+            inputElement.value = table_elements[i].innerHTML;
+        }
         table_elements[i].innerHTML = "";
         table_elements[i].appendChild(inputElement);
     }
@@ -224,6 +240,7 @@ async function deleteData() {
 }
 
 function tableAddData() {
+    search_list.value = "";
     removeAllEventListeners();
     disableSearchElements(true);
     add_btn.disabled=true;
