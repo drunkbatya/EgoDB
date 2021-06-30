@@ -53,14 +53,35 @@ const deleteData = (request, response) => {
 
 const addData = (request, response) => {
     const ans = request.body; // just for length
-    console.log(ans);
-    pool.query('INSERT INTO data (comp_name, comp_inn, dog_number, dog_date, dog_state, dog_comment) VALUES ($1, $2, $3, $4, $5, $6)', ans, (error, results) => {
+    pool.query('INSERT INTO data (comp_name, comp_inn, dog_number, dog_date, dog_state, dog_comment) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id', ans, (error, results) => {
         if (error) {
             throw error
         }
-        response.status(200).json("Операция выполнена успешно!");
+        var ans = new Object();
+        ans.text = "Операция выполнена успешно!";
+        ans.id = results.rows[0].id;
+        //response.status(200).json("Операция выполнена успешно!");
+        response.status(200).json(ans);
     });
 }
+
+const uploadFiles = (request, response) => {
+    const id = parseInt(request.params.id);
+    const files = request.files;
+    console.log(files);
+    console.log(request.params.id)
+    //pool.query('UPDATE data SET', ans, (error, results) => {
+        //if (error) {
+        //    throw error
+        //}
+        //var ans = new Object();
+        //ans.text = "Операция выполнена успешно!";
+        //ans.id = results.rows[0].id;
+        ////response.status(200).json("Операция выполнена успешно!");
+        //response.status(200).json(ans);
+        response.status(200).json("Океееей!");
+    //});
+};
 
 function getUsersSecret() {
     return new Promise(resolve => {
@@ -76,4 +97,5 @@ module.exports = {
     updateData,
     deleteData,
     addData,
+    uploadFiles,
 }

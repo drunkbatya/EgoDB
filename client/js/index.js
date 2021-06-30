@@ -78,6 +78,23 @@ function backendPost(url, array) {
 	});
 }
 
+function backendUploadFiles(url, files) {
+	var req = new XMLHttpRequest();
+    var formData = new FormData();
+	return new Promise(function(resolve, reject) {
+		req.onload = function() {
+	        var resp = JSON.parse(req.responseText);
+			resolve(resp);
+		}
+        for(var i =0; i<files.length; i++) {
+            formData.append('docs', files[i], files[i].name);
+        }
+        req.open('POST', url);
+		req.send(formData);
+	});
+}
+
+
 function setup(e) {
 	//LISTNERS
 	search_btn.addEventListener('click', searchGet, false);
@@ -213,6 +230,12 @@ function convertTableTextToInput() {
         table_elements[i].innerHTML = "";
         table_elements[i].appendChild(inputElement);
     }
+    // files
+    var file_input = document.createElement("input");
+    file_input.type = "file";
+    file_input.multiple = true;
+    file_input.id = "file_uploader";
+    files_table.appendChild(file_input);
 }
 
 async function editData() {
@@ -255,13 +278,21 @@ function tableAddData() {
     convertTableTextToInput();
 
 }
-async function addData() {    
+async function addData() {
+    // in first, we writing all text data to db, and uploading files after success
     var array = [];
+    var file_uploader = document.getElementById("file_uploader");
     for (var i = 0; i<table_elements.length; i++) {
         array[i] = table_elements[i].lastElementChild.value;
     }
     var resp = await backendPost('/server', array);
-    alert(resp);
+    if (file_uploader.files.length && resp.text == "Операция выполнена успешно!") {   
+        var resp = await backendUploadFiles('/server/files/'+resp.id, file_uploader.files);
+        alert(resp);
+    }
+    else {
+        alert(resp.text);
+    }
     searchClear();
     getList();
 }

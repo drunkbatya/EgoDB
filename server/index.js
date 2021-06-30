@@ -6,7 +6,9 @@ const app = express();
 const port = 80;
 const db = require('./database');
 const ROOT = "/home/mandreev/EgoDB/";
-
+const FILES_DIR = "/opt/EgoDBFiles";
+const multer = require("multer");
+const upload = multer({ dest: FILES_DIR });
 app.use(basicAuth({
     authorizer: beginAuth,
     authorizeAsync: true,
@@ -15,7 +17,7 @@ app.use(basicAuth({
 }));
 
 app.use(bodyParser.json());
-app.use(morgan('combined'));
+//app.use(morgan('combined'));
 
 app.use(
     bodyParser.urlencoded({
@@ -23,6 +25,7 @@ app.use(
     })
 )
 app.use('/', express.static('client'));
+app.use('/files', express.static(FILES_DIR));
 //app.get('/users', db.getUsersList);
 
 app.get('/logout', function (req, res) {
@@ -35,6 +38,7 @@ app.get('/server/:id', db.getAllById);
 app.put('/server/:id', db.updateData);
 app.delete('/server/:id', db.deleteData);
 app.post('/server', db.addData);
+app.post("/server/files/:id", upload.array("docs"), db.uploadFiles);
 
 //app.get('/login', function(req, res){
 //    res.sendFile(ROOT+'client/login.html');
