@@ -1,5 +1,6 @@
 window.addEventListener('load', setup, false);
 
+const FILES_PATH = "/files/";
 // declaration page objects
 var search_btn = document.getElementById("search_btn");
 var search_сlear_btn = document.getElementById("search_clear_btn");
@@ -188,14 +189,14 @@ async function searchGet(e) {
             var link = document.createElement("a");
             var brr = document.createElement("br");
             //var name = ans.files[i].match(/\/(\w+.\w+)$/);
-            var name = ans.files[i].match(/\/([^\/]+)$/);
-            if (name) {
+            //var name = ans.files[i].match(/\/([^\/]+)$/);
+            //if (ans.files[i]) {
                 // regexp will cut file path to file name; name[1] will print regexp group in ();
-                link.innerHTML = name[1];
-                link.href = ans.files[i];
+                link.innerHTML = ans.files[i];
+                link.href = FILES_PATH+ans.files[i];
                 files_table.appendChild(link);
                 files_table.appendChild(brr);
-            }
+            //}
         }
     }
     data_table.style.visibility = 'visible';

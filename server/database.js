@@ -68,19 +68,17 @@ const addData = (request, response) => {
 const uploadFiles = (request, response) => {
     const id = parseInt(request.params.id);
     const files = request.files;
-    console.log(files);
-    console.log(request.params.id)
-    //pool.query('UPDATE data SET', ans, (error, results) => {
-        //if (error) {
-        //    throw error
-        //}
-        //var ans = new Object();
-        //ans.text = "Операция выполнена успешно!";
-        //ans.id = results.rows[0].id;
-        ////response.status(200).json("Операция выполнена успешно!");
-        //response.status(200).json(ans);
+    //console.log(files);
+    var arr=[];
+    for (var CUR in files) {
+        arr[CUR] = files[CUR].filename;
+    }
+    pool.query('UPDATE data SET files = files || $1 WHERE id=$2;', [arr, id], (error, results) => {
+        if (error) {
+            throw error
+        }
         response.status(200).json("Океееей!");
-    //});
+    });
 };
 
 function getUsersSecret() {

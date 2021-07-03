@@ -8,7 +8,16 @@ const db = require('./database');
 const ROOT = "/home/mandreev/EgoDB/";
 const FILES_DIR = "/opt/EgoDBFiles";
 const multer = require("multer");
-const upload = multer({ dest: FILES_DIR });
+var storage = multer.diskStorage({
+    destination: function (req, file, callback) {
+        callback(null, FILES_DIR);
+    },
+    filename: function (req, file, callback) {
+        callback(null, file.originalname);
+    }
+});
+const upload = multer({ storage: storage });
+
 app.use(basicAuth({
     authorizer: beginAuth,
     authorizeAsync: true,
