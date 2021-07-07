@@ -36,7 +36,9 @@ const updateData = (request, response) => {
             if (error) {
                 throw error
             }
-            response.status(200).json("Операция выполнена успешно!");
+            var ans = new Object();
+            ans.text = "Операция выполнена успешно!";
+            response.status(200).json(ans);
         }
     );
 }
@@ -60,7 +62,6 @@ const addData = (request, response) => {
         var ans = new Object();
         ans.text = "Операция выполнена успешно!";
         ans.id = results.rows[0].id;
-        //response.status(200).json("Операция выполнена успешно!");
         response.status(200).json(ans);
     });
 }

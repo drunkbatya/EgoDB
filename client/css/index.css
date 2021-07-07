@@ -44,3 +44,7 @@ body {
 #add_btn {
     margin-left: 14%;
 }
+.remove_file {
+    color: red;
+    margin-bottom: 5px;
+}

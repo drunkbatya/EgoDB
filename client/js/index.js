@@ -148,6 +148,22 @@ function convertDate(inp) {
     return inp;
 }
 
+function removeFileButton(e) {
+    e.remove();
+}
+
+// this function will check does array contains only null values
+// we need this function because "array.length" will be true 
+// even if array contains everything, e.g. null values
+function checkFullNulledArray(array) {
+    for (var i=0; i<array.length; i++) {
+        if (array[i] != null) { 
+            return false;
+        }
+    }
+    return true;
+}
+
 async function searchGet(e) {
     tableClear();
     stop_edit_btn.style.visibility = "hidden";
@@ -171,8 +187,10 @@ async function searchGet(e) {
     add_btn.disabled=true;
     ans = ans[0];
     // converting date from "2021-01-04T00:00:00.000Z" to "2021-01-04"
-    ans.dog_date = ans.dog_date.match(/\d{4}-\d{2}-\d{2}/g);
-    ans.dog_date = convertDate(ans.dog_date[0]);
+    if (ans.dog_date) {
+        ans.dog_date = ans.dog_date.match(/\d{4}-\d{2}-\d{2}/g);
+        ans.dog_date = convertDate(ans.dog_date[0]);
+    }
     // updating from DB data
     table_elements[0].innerHTML = ans.comp_name;
     table_elements[1].innerHTML = ans.comp_inn;
@@ -194,6 +212,7 @@ async function searchGet(e) {
                 // regexp will cut file path to file name; name[1] will print regexp group in ();
                 link.innerHTML = ans.files[i];
                 link.href = FILES_PATH+ans.files[i];
+                link.target = "_blank";
                 files_table.appendChild(link);
                 files_table.appendChild(brr);
             //}
@@ -232,6 +251,30 @@ function convertTableTextToInput() {
         table_elements[i].appendChild(inputElement);
     }
     // files
+    var files_array = [];
+    // pushing all existing file names to array
+    for (var i=0; i<files_table.childNodes.length; i++) {
+        if (files_table.childNodes[i].innerHTML) {
+            files_array.push(files_table.childNodes[i].innerHTML);
+        }
+    }
+    // clearing file table
+    while (files_table.firstChild) {
+        files_table.removeChild(files_table.lastChild);
+    }
+
+    for (var i=0; i<files_array.length; i++) {
+        var file_button = document.createElement("button");
+        var brr = document.createElement("br");
+        file_button.innerHTML = "Удалить "+files_array[i];
+        file_button.className = "remove_file";
+        file_button.onclick = function() {
+            removeFileButton(this);
+        }
+        files_table.appendChild(file_button);
+        files_table.appendChild(brr);
+    }
+    
     var file_input = document.createElement("input");
     file_input.type = "file";
     file_input.multiple = true;
@@ -240,14 +283,44 @@ function convertTableTextToInput() {
 }
 
 async function editData() {
+    var file_uploader = document.getElementById("file_uploader");
     var search_query = search_list.value;	
     var id = search_query.substr(search_query.indexOf('id=') + 3);
     var array = [];
+    var files_array = [];
+    var resp;
     for (var i = 0; i<table_elements.length; i++) {
-        array[i] = table_elements[i].lastElementChild.value;
+        if (table_elements[i].lastElementChild.value) {
+            array[i] = table_elements[i].lastElementChild.value;
+        }   
+        else {
+            array[i] = null;
+        }
     }
-    var resp = await backendPut('/server/'+id, array);
-    alert(resp);
+    if (checkFullNulledArray(array)) {
+        alert("Введите хоть что-нибудь!");
+        return;
+    }
+    // getting list of existing files
+    for (var i=0; i<files_table.childNodes.length; i++) {
+        if (files_table.childNodes[i].innerHTML) {
+            var innerOnButton = files_table.childNodes[i].innerHTML;
+            var fileName = innerOnButton.substr(innerOnButton.indexOf('Удалить ') + 8);
+            files_array.push(fileName);
+        }
+    }
+
+    console.log(files_array);
+
+    resp = await backendPut('/server/'+id, array);
+    if (file_uploader.files.length && resp.text == "Операция выполнена успешно!") {
+        resp = await backendUploadFiles('/server/files/'+id, file_uploader.files);
+        alert(resp);
+    }
+    else {
+        alert(resp.text);
+    }
+    getList();
     searchGet();
 }
 
@@ -284,7 +357,16 @@ async function addData() {
     var array = [];
     var file_uploader = document.getElementById("file_uploader");
     for (var i = 0; i<table_elements.length; i++) {
-        array[i] = table_elements[i].lastElementChild.value;
+        if (table_elements[i].lastElementChild.value) {
+            array[i] = table_elements[i].lastElementChild.value;
+        }
+        else {
+            array[i] = null;
+        }
+    }
+    if (checkFullNulledArray(array)) {
+        alert("Введите хоть что-нибудь!");
+        return;
     }
     var resp = await backendPost('/server', array);
     if (file_uploader.files.length && resp.text == "Операция выполнена успешно!") {   
