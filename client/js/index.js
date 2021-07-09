@@ -1,5 +1,3 @@
-window.addEventListener('load', setup, false);
-
 const FILES_PATH = "/files/";
 // declaration page objects
 var search_btn = document.getElementById("search_btn");
@@ -11,6 +9,7 @@ var table_edit_btn = document.getElementById("table_edit_btn");
 var stop_edit_btn = document.getElementById("stop_edit_btn");
 var delete_btn = document.getElementById("delete_btn");
 var add_btn = document.getElementById("add_btn");
+var loading = document.getElementById("loading");
 //accessing table elements
 var table_elements = [];
 table_elements[0] = document.getElementById("comp_name");
@@ -21,6 +20,9 @@ table_elements[4] = document.getElementById("dog_state");
 table_elements[5] = document.getElementById("dog_comment");
 files_table = document.getElementById("files");
 
+window.addEventListener('load', setup, false);
+
+
 function disableSearchElements(state) {
     search_list.disabled = state;
     search_btn.disabled = state;
@@ -29,8 +31,10 @@ function disableSearchElements(state) {
 
 function backendGet(url) {
 	var req = new XMLHttpRequest();
+    //loading.style.display = "block";
 	return new Promise(function(resolve, reject) {
 		req.onload = function() {
+            //loading.style.display = "none";
 	        var resp = JSON.parse(req.responseText);
 			resolve(resp);
 		}
@@ -41,8 +45,10 @@ function backendGet(url) {
 
 function backendDel(url) {
 	var req = new XMLHttpRequest();
+    loading.style.display = "block";
 	return new Promise(function(resolve, reject) {
 		req.onload = function() {
+            loading.style.display = "none";
 	        var resp = JSON.parse(req.responseText);
 			resolve(resp);
 		}
@@ -53,8 +59,10 @@ function backendDel(url) {
 
 function backendPut(url, array) {
 	var req = new XMLHttpRequest();
+    loading.style.display = "block";
 	return new Promise(function(resolve, reject) {
 		req.onload = function() {
+            loading.style.display = "none";
 	        var resp = JSON.parse(req.responseText);
 			resolve(resp);
 		}
@@ -67,9 +75,11 @@ function backendPut(url, array) {
 
 function backendPost(url, array) {
 	var req = new XMLHttpRequest();
+    loading.style.display = "block";
 	return new Promise(function(resolve, reject) {
 		req.onload = function() {
-	        var resp = JSON.parse(req.responseText);
+	        loading.style.display = "none";
+            var resp = JSON.parse(req.responseText);
 			resolve(resp);
 		}
 		req.open('POST', url, true);
@@ -82,9 +92,11 @@ function backendPost(url, array) {
 function backendUploadFiles(url, files) {
 	var req = new XMLHttpRequest();
     var formData = new FormData();
+    loading.style.display = "block";
 	return new Promise(function(resolve, reject) {
 		req.onload = function() {
 	        var resp = JSON.parse(req.responseText);
+            loading.style.display = "none";
 			resolve(resp);
 		}
         for(var i =0; i<files.length; i++) {
@@ -111,6 +123,8 @@ function setup(e) {
     delete_btn.innerHTML = "Удалить документ";
 	getList();
     disableSearchElements(false);
+    loading.style.display = "none";
+
 }
 
 function searchClear(e) {
@@ -369,7 +383,7 @@ async function addData() {
         return;
     }
     var resp = await backendPost('/server', array);
-    if (file_uploader.files.length && resp.text == "Операция выполнена успешно!") {   
+    if (file_uploader.files.length && resp.text == "Операция выполнена успешно!") {
         var resp = await backendUploadFiles('/server/files/'+resp.id, file_uploader.files);
         alert(resp.text);
     }
