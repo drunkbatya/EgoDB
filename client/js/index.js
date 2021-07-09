@@ -286,18 +286,20 @@ async function editData() {
     var file_uploader = document.getElementById("file_uploader");
     var search_query = search_list.value;	
     var id = search_query.substr(search_query.indexOf('id=') + 3);
-    var array = [];
-    var files_array = [];
+    var obj = {
+        data: [],
+        files: []
+    };
     var resp;
     for (var i = 0; i<table_elements.length; i++) {
         if (table_elements[i].lastElementChild.value) {
-            array[i] = table_elements[i].lastElementChild.value;
+            obj.data[i] = table_elements[i].lastElementChild.value;
         }   
         else {
-            array[i] = null;
+            obj.data[i] = null;
         }
     }
-    if (checkFullNulledArray(array)) {
+    if (checkFullNulledArray(obj.data)) {
         alert("Введите хоть что-нибудь!");
         return;
     }
@@ -306,16 +308,14 @@ async function editData() {
         if (files_table.childNodes[i].innerHTML) {
             var innerOnButton = files_table.childNodes[i].innerHTML;
             var fileName = innerOnButton.substr(innerOnButton.indexOf('Удалить ') + 8);
-            files_array.push(fileName);
+            obj.files.push(fileName);
         }
     }
 
-    console.log(files_array);
-
-    resp = await backendPut('/server/'+id, array);
+    resp = await backendPut('/server/'+id, obj);
     if (file_uploader.files.length && resp.text == "Операция выполнена успешно!") {
         resp = await backendUploadFiles('/server/files/'+id, file_uploader.files);
-        alert(resp);
+        alert(resp.text);
     }
     else {
         alert(resp.text);
@@ -330,7 +330,7 @@ async function deleteData() {
     var search_query = search_list.value;
     var id = search_query.substr(search_query.indexOf('id=') + 3);
     var resp = await backendDel('/server/'+id);
-    alert(resp);
+    alert(resp.text);
     disableSearchElements(false);
     searchClear();
     getList();
@@ -371,7 +371,7 @@ async function addData() {
     var resp = await backendPost('/server', array);
     if (file_uploader.files.length && resp.text == "Операция выполнена успешно!") {   
         var resp = await backendUploadFiles('/server/files/'+resp.id, file_uploader.files);
-        alert(resp);
+        alert(resp.text);
     }
     else {
         alert(resp.text);

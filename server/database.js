@@ -1,4 +1,5 @@
 const Pool = require('pg').Pool
+
 const pool = new Pool({
     user: 'egouser',
     host: 'localhost',
@@ -28,39 +29,48 @@ const getAllById = (request, response) => {
 
 const updateData = (request, response) => {
     const id = parseInt(request.params.id);
-    const ans = request.body; // just for length
-    ans[6] = id;
+    const data = request.body.data;
+    const files = request.body.files;
+    var ans = {};
+    ans.text = "Операция выполнена успешно!";
+    data[6] = id;
     pool.query(
-        'UPDATE data SET comp_name = $1, comp_inn = $2, dog_number = $3, dog_date = $4, dog_state = $5, dog_comment = $6 WHERE id = $7', ans,
-        (error, results) => {
-            if (error) {
-                throw error
-            }
-            var ans = new Object();
-            ans.text = "Операция выполнена успешно!";
+        'UPDATE data SET comp_name = $1, comp_inn = $2, dog_number = $3, dog_date = $4, dog_state = $5, dog_comment = $6 WHERE id = $7', data, (error, results) => {
+        if (error) {
+            throw error
+        }
+        if (!files) {
             response.status(200).json(ans);
         }
-    );
+    });
+    pool.query('UPDATE data SET files = $1 WHERE id=$2;', [files, id], (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).json(ans);
+    });
 }
 
 const deleteData = (request, response) => {
     const id = parseInt(request.params.id);
+    var ans = {};
+    ans.text = "Операция выполнена успешно!";
     pool.query('DELETE FROM data WHERE id = $1', [id] , (error, results) => {
         if (error) {
-            throw error
+            throw error;
         }
-        response.status(200).json("Операция выполнена успешно!")
+        response.status(200).json(ans);
     })
 }
 
 const addData = (request, response) => {
-    const ans = request.body; // just for length
-    pool.query('INSERT INTO data (comp_name, comp_inn, dog_number, dog_date, dog_state, dog_comment) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id', ans, (error, results) => {
+    const data = request.body;
+    var ans = {};
+    ans.text = "Операция выполнена успешно!";
+    pool.query('INSERT INTO data (comp_name, comp_inn, dog_number, dog_date, dog_state, dog_comment) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id', data, (error, results) => {
         if (error) {
             throw error
         }
-        var ans = new Object();
-        ans.text = "Операция выполнена успешно!";
         ans.id = results.rows[0].id;
         response.status(200).json(ans);
     });
@@ -68,8 +78,9 @@ const addData = (request, response) => {
 
 const uploadFiles = (request, response) => {
     const id = parseInt(request.params.id);
+    var ans = {};
+    ans.text = "Операция выполнена успешно!";
     const files = request.files;
-    //console.log(files);
     var arr=[];
     for (var CUR in files) {
         arr[CUR] = files[CUR].filename;
@@ -78,7 +89,7 @@ const uploadFiles = (request, response) => {
         if (error) {
             throw error
         }
-        response.status(200).json("Океееей!");
+        response.status(200).json(ans);
     });
 };
 
