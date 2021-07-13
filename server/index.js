@@ -58,13 +58,10 @@ app.listen(port, () => {
 })
 
 async function beginAuth(username, password, cb) {
-    var dbAns = await db.getUsersSecret();
-    for (var i = 0; i<dbAns.rowCount; i++) {
-        if (username == dbAns.rows[i].username) {
-            if (password == dbAns.rows[i].password) {
-                return cb(null, true);
-            }
-        }
+    var dbAns = await db.checkValidCredentials(username, password);
+    dbAns = parseInt(dbAns.rows[0].count);
+    if (dbAns) {
+        return cb(null, true);
     }
     return cb(null, false);
 }

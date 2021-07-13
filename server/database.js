@@ -85,7 +85,7 @@ const uploadFiles = (request, response) => {
     for (var CUR in files) {
         arr[CUR] = files[CUR].filename;
     }
-    pool.query('UPDATE data SET files = files || $1 WHERE id=$2;', [arr, id], (error, results) => {
+    pool.query('UPDATE data SET files = files || $1 WHERE id=$2', [arr, id], (error, results) => {
         if (error) {
             throw error
         }
@@ -93,15 +93,15 @@ const uploadFiles = (request, response) => {
     });
 };
 
-function getUsersSecret() {
+function checkValidCredentials(username, password) {
     return new Promise(resolve => {
-        var dbResp = pool.query('SELECT username,password FROM users');
+        var dbResp = pool.query('SELECT COUNT(*) FROM users WHERE username = $1 AND password = $2', [username, password]);
         resolve(dbResp);
     });
 }
 
 module.exports = {
-    getUsersSecret,
+    checkValidCredentials,
     getAllData,
     getAllById,
     updateData,
