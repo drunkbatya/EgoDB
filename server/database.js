@@ -93,6 +93,13 @@ const uploadFiles = (request, response) => {
     });
 };
 
+function checkCookie(cookie) {
+    return new Promise(resolve => {
+        var dbResp = pool.query('SELECT COUNT(*) FROM users WHERE ilovecookie = $1', [cookie]);
+    resolve(dbResp);
+    });
+}
+
 function checkValidCredentials(username, password) {
     return new Promise(resolve => {
         var dbResp = pool.query('SELECT COUNT(*) FROM users WHERE username = $1 AND password = $2', [username, password]);
@@ -100,7 +107,31 @@ function checkValidCredentials(username, password) {
     });
 }
 
+const getEgoUserName = (req, res) => {
+    var cookie = req.cookies.egoSession;
+    var ans = {};
+    pool.query('SELECT fullname FROM users WHERE ilovecookie = $1', [cookie] , (error, results) => {
+        if (error) {
+            throw error;
+        }
+        ans.egouser_name = results.rows[0].fullname;
+        res.status(200).json(ans);
+    });
+}
+const logout = (req, res) => {
+    var cookie = req.cookies.egoSession;
+    pool.query('UPDATE users SET ilovecookie = NULL WHERE ilovecookie = $1', [cookie] , (error, results) => {
+        if (error) {
+            throw error;
+        }
+        res.status(200);
+    });
+}
+
 module.exports = {
+    logout,
+    getEgoUserName,
+    checkCookie,
     checkValidCredentials,
     getAllData,
     getAllById,

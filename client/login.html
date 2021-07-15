@@ -1,9 +1,42 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet" href="css/login.css">
+        <style>
+            body {
+                background: #F0F0F0;
+            }
+            h1,h2 {
+                text-align: center;
+            }
+            #auth-container {
+                background: #CCCCCC;
+                width: 500px;
+                height: 300px;
+                left: calc(50% - 500px/2);
+                top: calc(50% - 300px/2);
+                text-align: center;
+                position: absolute;
+            }
+            .inputs {
+                width: 70%;
+                height: 20px;
+                margin: 10px;
+            }
+            #auth_btn {
+                margin-top: 25px;
+                font-size: 20px;
+            }
+        </style>
     </head>
     <body>
-        <h1>Login</h1>
+        <div id="auth-container">
+            <h1>EgoDB</h1>
+            <h2>Авторизация</h2>
+            <input class="inputs" id="login" type="text" placeholder="Введите логин" />
+            <br>
+            <input class="inputs" id="password" type="password" placeholder="Введите пароль" />
+            <br>
+            <button id="auth_btn">Войти!</button>
+        </div>
     </body>
 </html>

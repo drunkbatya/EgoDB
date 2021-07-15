@@ -10,6 +10,7 @@ var stop_edit_btn = document.getElementById("stop_edit_btn");
 var delete_btn = document.getElementById("delete_btn");
 var add_btn = document.getElementById("add_btn");
 var loading = document.getElementById("loading");
+var egouser_name = document.getElementById("egouser_name");
 //accessing table elements
 var table_elements = [];
 table_elements[0] = document.getElementById("comp_name");
@@ -45,7 +46,7 @@ function backendGet(url) {
 
 function backendDel(url) {
 	var req = new XMLHttpRequest();
-    loading.style.display = "block";
+    //loading.style.display = "block";
 	return new Promise(function(resolve, reject) {
 		req.onload = function() {
             loading.style.display = "none";
@@ -116,8 +117,10 @@ function setup(e) {
 	delete_btn.addEventListener('click', deleteData, false);
 	search_list.addEventListener('blur', placeholderSet, false);
 	add_btn.addEventListener('click', tableAddData, false);
+	logout_btn.addEventListener('click', logout, false);
 	//LISTNERS_END
 	placeholderSet();
+    getEgoUserName();
 	data_table.style.visibility = 'hidden';
     stop_edit_btn.innerHTML = "Отмена";
     delete_btn.innerHTML = "Удалить документ";
@@ -412,4 +415,13 @@ async function getList() {
 		listElement.value = resp[i].comp_name +" -- "+ resp[i].comp_inn + "                   id="+resp[i].id;
 		id_list.appendChild(listElement);
 	}
+}
+async function getEgoUserName() {
+    var resp = await backendGet('/server/username');
+    console.log('resp');
+    egouser_name.innerHTML = resp.egouser_name;
+}
+function logout() {
+    backendDel('/server/logout');
+    window.location.href = "/login";
 }

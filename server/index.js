@@ -2,10 +2,12 @@ const express = require('express');
 const morgan = require('morgan');
 const basicAuth = require('express-basic-auth');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const crypto = require("crypto");
 const app = express();
 const port = 80;
 const db = require('./database');
-const ROOT = "/home/mandreev/EgoDB/";
+const ROOT = "/home/drunkbatya/EgoDB/";
 const FILES_DIR = "/opt/EgoDBFiles";
 const multer = require("multer");
 var storage = multer.diskStorage({
@@ -18,12 +20,36 @@ var storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-app.use(basicAuth({
-    authorizer: beginAuth,
-    authorizeAsync: true,
-    challenge: true,
-    unauthorizedResponse: getUnauthorizedResponse,
-}));
+app.use(cookieParser());
+
+app.use(function (req, res, next) {
+    var cookie = req.cookies.egoSession;
+    if (!cookie) {
+        var cookie_value = crypto.randomBytes(21).toString('hex');
+        res.cookie('egoSession', cookie_value, { httpOnly: true });
+    }
+    next();
+});
+
+
+app.get('/login', function(req, res){
+    return res.status(200).sendFile(ROOT+'/client/login.html');
+});
+
+
+app.get('/favicon.ico', function(req, res){
+    return res.status(200).sendFile(ROOT+'/client/favicon.ico');
+});
+
+app.use(async function (req, res, next) {
+    var cookie = req.cookies.egoSession;
+    dbAns = await db.checkCookie(cookie);
+    dbAns = parseInt(dbAns.rows[0].count);
+    if (!dbAns) {
+        return res.status(401).redirect('/login');
+    }
+    next();
+});
 
 app.use(bodyParser.json());
 //app.use(morgan('combined'));
@@ -37,21 +63,15 @@ app.use('/', express.static('client'));
 app.use('/files', express.static(FILES_DIR));
 //app.get('/users', db.getUsersList);
 
-app.get('/logout', function (req, res) {
-    res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
-    return res.sendStatus(401);
-});
-
-app.get('/server', db.getAllData);
+app.get('/server/username/', db.getEgoUserName);
 app.get('/server/:id', db.getAllById);
+app.get('/server', db.getAllData);
 app.put('/server/:id', db.updateData);
+app.delete('/server/logout', db.logout);
 app.delete('/server/:id', db.deleteData);
-app.post('/server', db.addData);
 app.post("/server/files/:id", upload.array("docs"), db.uploadFiles);
+app.post('/server', db.addData);
 
-//app.get('/login', function(req, res){
-//    res.sendFile(ROOT+'client/login.html');
-//});
 
 app.listen(port, () => {
     console.log(`App running on port ${port}.`)

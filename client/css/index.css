@@ -11,7 +11,7 @@ body {
 	width: 50%;
 }
 #data_table{
-	border: 1px solid #1d99f3;
+	border: 2px solid #1d99f3;
 	width: 50%;
 	float: right;
 }
@@ -66,4 +66,17 @@ body {
   top: 100px;
   left: 240px;
   z-index: 100;
+}
+#user_info {
+    position: absolute;
+    top: 25px;
+    right: 12px;
+    /*background: #CCCCCC;*/
+    text-align: center;
+}
+#logout_btn {
+    margin-top: 10px;
+}
+#egouser_name {
+    color: #1d99f3;
 }
