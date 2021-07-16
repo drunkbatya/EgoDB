@@ -418,7 +418,6 @@ async function getList() {
 }
 async function getEgoUserName() {
     var resp = await backendGet('/server/username');
-    console.log('resp');
     egouser_name.innerHTML = resp.egouser_name;
 }
 function logout() {

@@ -21,6 +21,7 @@ var storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 app.use(cookieParser());
+app.use(bodyParser.json());
 
 app.use(function (req, res, next) {
     var cookie = req.cookies.egoSession;
@@ -31,11 +32,11 @@ app.use(function (req, res, next) {
     next();
 });
 
+app.post('/server/login', db.login);
 
 app.get('/login', function(req, res){
     return res.status(200).sendFile(ROOT+'/client/login.html');
 });
-
 
 app.get('/favicon.ico', function(req, res){
     return res.status(200).sendFile(ROOT+'/client/favicon.ico');
@@ -51,7 +52,6 @@ app.use(async function (req, res, next) {
     next();
 });
 
-app.use(bodyParser.json());
 //app.use(morgan('combined'));
 
 app.use(

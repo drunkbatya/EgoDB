@@ -26,17 +26,58 @@
                 margin-top: 25px;
                 font-size: 20px;
             }
+            #ego_msg {
+                color: red;
+            }
         </style>
     </head>
     <body>
         <div id="auth-container">
             <h1>EgoDB</h1>
             <h2>Авторизация</h2>
+            <div id="ego_msg"></div>
             <input class="inputs" id="login" type="text" placeholder="Введите логин" />
             <br>
             <input class="inputs" id="password" type="password" placeholder="Введите пароль" />
             <br>
             <button id="auth_btn">Войти!</button>
         </div>
+        <script>
+            var ego_msg = document.getElementById("ego_msg");
+            var login = document.getElementById("login");
+            var password = document.getElementById("password");
+            var auth_btn = document.getElementById("auth_btn");
+            login.addEventListener('click', ego_msgHide, false);
+            password.addEventListener('click', ego_msgHide, false);
+            auth_btn.addEventListener('click', beginAuth, false);
+            function ego_msgHide() {
+                ego_msg.innerHTML = "";
+            }
+            async function beginAuth() {
+                if (!login.value || !password.value) {
+                    ego_msg.innerHTML = "Введите логин и пароль!";
+                    return;
+                }
+                var dbResp = await backendAuth();
+                ego_msg.innerHTML = dbResp;
+            }
+            function backendAuth() {
+                var req = new XMLHttpRequest();
+                return new Promise(function(resolve, reject) {
+                    req.onload = function() {
+                        var dbResp = JSON.parse(req.responseText);
+                        if (req.status == 200 && dbResp == "Авторизация выполнена успешно!") {
+                            window.location.href = "/";
+                            return;
+                        }
+                        resolve(dbResp);
+                    }
+                    req.open('POST', '/server/login', true);
+                    req.setRequestHeader('Content-type','application/json; charset=utf-8');
+                    var json = '{"username":"'+login.value+'","password":"'+password.value+'"}';
+                    req.send(json);
+                });
+            }
+        </script>
     </body>
 </html>

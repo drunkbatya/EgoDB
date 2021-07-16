@@ -96,7 +96,7 @@ const uploadFiles = (request, response) => {
 function checkCookie(cookie) {
     return new Promise(resolve => {
         var dbResp = pool.query('SELECT COUNT(*) FROM users WHERE ilovecookie = $1', [cookie]);
-    resolve(dbResp);
+        resolve(dbResp);
     });
 }
 
@@ -124,11 +124,36 @@ const logout = (req, res) => {
         if (error) {
             throw error;
         }
-        res.status(200);
+        res.status(200).json("Выход выполнен успешно!");
+    });
+}
+
+
+const login = async (req, res) => {
+    const data = req.body;
+    const cookie = req.cookies.egoSession;
+    console.log(data);
+    if (!data.username || !data.password) {
+        res.status(403).json("Отсутствуют данные.");
+        return;
+    }
+    var dbAns = await pool.query('SELECT COUNT(*) FROM users WHERE username = $1 AND password = $2', [data.username, data.password]);
+    dbAns = parseInt(dbAns.rows[0].count);
+    if (!dbAns) {
+        res.status(401).json("Введённые данные не верны!");
+        return;
+    }
+    // it's specially replaces old cookie to new, cause this "web-app's" idea doesn't imply manny sessions for one user
+    pool.query('UPDATE users SET ilovecookie = $1 WHERE username = $2', [cookie, data.username], (error, results) => {
+        if (error) {
+            throw error
+        }
+        res.status(200).json("Авторизация выполнена успешно!");
     });
 }
 
 module.exports = {
+    login,
     logout,
     getEgoUserName,
     checkCookie,

@@ -6,5 +6,5 @@ password VARCHAR ( 50 ) NOT NULL,
 email VARCHAR ( 255 ) UNIQUE,
 created_on TIMESTAMP NOT NULL,
 last_login TIMESTAMP
-ilovecookie VARCHAR (22)
+ilovecookie VARCHAR (50)
 );
