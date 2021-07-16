@@ -10,8 +10,8 @@ Its allow to upload files to server (e.g. scans) and insert some values of docs 
 - [x] Add files adding functionality
 - [ ] Do progressive error cathing
 - [ ] Add "bugreport" function
-- [ ] Migrate from basic auth to cookies
+- [x] Migrate from basic auth to cookies
 - [ ] Make interface user friendly
 - [ ] ! Store download files to separate folder !
-- [ ] Rewrite user/pass validation (select count(*) etc.. )
-
+- [x] Rewrite user/pass validation (select count(*) etc.. )
+- [ ] Try to insert real document with all real fields
