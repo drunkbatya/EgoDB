@@ -47,12 +47,15 @@
             var login = document.getElementById("login");
             var password = document.getElementById("password");
             var auth_btn = document.getElementById("auth_btn");
-            login.addEventListener('click', ego_msgHide, false);
-            password.addEventListener('click', ego_msgHide, false);
             auth_btn.addEventListener('click', beginAuth, false);
-            function ego_msgHide() {
+            document.addEventListener('click', () => {
                 ego_msg.innerHTML = "";
-            }
+            }, false);
+            document.addEventListener('keyup', (e) => {
+                if (e.key == "Enter") {
+                    beginAuth();
+                }
+            }, false);
             async function beginAuth() {
                 if (!login.value || !password.value) {
                     ego_msg.innerHTML = "Введите логин и пароль!";
