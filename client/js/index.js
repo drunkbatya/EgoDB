@@ -228,7 +228,7 @@ async function searchGet(e) {
             //if (ans.files[i]) {
                 // regexp will cut file path to file name; name[1] will print regexp group in ();
                 link.innerHTML = ans.files[i];
-                link.href = FILES_PATH+ans.files[i];
+                link.href = FILES_PATH+"/"+id+"/"+ans.files[i];
                 link.target = "_blank";
                 files_table.appendChild(link);
                 files_table.appendChild(brr);
