@@ -1,4 +1,9 @@
 <!DOCTYPE html>
+<!--
+This file contains HTML, CSS & JS code.
+I did it especially, cause i want to serve single file to unathorized clients.
+For security reason.
+-->
 <html>
     <head>
         <style>
@@ -50,11 +55,14 @@
             auth_btn.addEventListener('click', beginAuth, false);
             document.addEventListener('click', () => {
                 ego_msg.innerHTML = "";
-            }, false);
+            }, true);
             document.addEventListener('keyup', (e) => {
                 if (e.key == "Enter") {
                     beginAuth();
                 }
+            }, false);
+            password.addEventListener('focus', () => {
+                password.value = "";
             }, false);
             async function beginAuth() {
                 if (!login.value || !password.value) {
