@@ -33,9 +33,8 @@ const updateData = (request, response) => {
     const files = request.body.files;
     var ans = {};
     ans.text = "Операция выполнена успешно!";
-    data[6] = id;
     pool.query(
-        'UPDATE data SET comp_name = $1, comp_inn = $2, dog_number = $3, dog_date = $4, dog_state = $5, dog_comment = $6 WHERE id = $7', data, (error, results) => {
+        'UPDATE data SET comp_name = $1, comp_inn = $2, dog_number = $3, dog_date = $4, dog_state = $5, dog_comment = $6 WHERE id = $7', [data.comp_name, data.comp_inn, data.dog_number, data.dog_date, data.dog_state, data.dog_comment, id], (error, results) => {
         if (error) {
             throw error
         }
@@ -67,7 +66,7 @@ const addData = (request, response) => {
     const data = request.body;
     var ans = {};
     ans.text = "Операция выполнена успешно!";
-    pool.query('INSERT INTO data (comp_name, comp_inn, dog_number, dog_date, dog_state, dog_comment) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id', data, (error, results) => {
+    pool.query('INSERT INTO data (comp_name, comp_inn, dog_number, dog_date, dog_state, dog_comment) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',[data.comp_name, data.comp_inn, data.dog_number, data.dog_date, data.dog_state, data.dog_comment], (error, results) => {
         if (error) {
             throw error
         }

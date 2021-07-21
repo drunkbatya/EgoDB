@@ -1,4 +1,4 @@
-const FILES_PATH = "/files/";
+const FILES_PATH = "/files";
 // declaration page objects
 var search_btn = document.getElementById("search_btn");
 var search_сlear_btn = document.getElementById("search_clear_btn");
@@ -12,13 +12,13 @@ var add_btn = document.getElementById("add_btn");
 var loading = document.getElementById("loading");
 var egouser_name = document.getElementById("egouser_name");
 //accessing table elements
-var table_elements = [];
-table_elements[0] = document.getElementById("comp_name");
-table_elements[1] = document.getElementById("comp_inn");
-table_elements[2] = document.getElementById("dog_number");
-table_elements[3] = document.getElementById("dog_date");
-table_elements[4] = document.getElementById("dog_state");
-table_elements[5] = document.getElementById("dog_comment");
+var table_elements = {};
+table_elements.comp_name = document.getElementById("comp_name");
+table_elements.comp_inn = document.getElementById("comp_inn");
+table_elements.dog_number = document.getElementById("dog_number");
+table_elements.dog_date = document.getElementById("dog_date");
+table_elements.dog_state = document.getElementById("dog_state");
+table_elements.dog_comment = document.getElementById("dog_comment");
 files_table = document.getElementById("files");
 
 window.addEventListener('load', setup, false);
@@ -75,6 +75,8 @@ function backendPut(url, array) {
 }
 
 function backendPost(url, array) {
+
+    console.log(array);
 	var req = new XMLHttpRequest();
     loading.style.display = "block";
 	return new Promise(function(resolve, reject) {
@@ -151,8 +153,8 @@ function placeholderChange(e) {
 }
 
 function tableClear() {
-    for (var i = 0; i < table_elements.length; i++) {
-        table_elements[i].innerHTML = "";
+    for (var cur in table_elements) {
+        table_elements[cur].innerHTML = "";
     }
     while (files_table.firstChild) {
         files_table.removeChild(files_table.lastChild);
@@ -173,8 +175,8 @@ function removeFileButton(e) {
 // we need this function because "array.length" will be true 
 // even if array contains everything, e.g. null values
 function checkFullNulledArray(array) {
-    for (var i=0; i<array.length; i++) {
-        if (array[i] != null) { 
+    for (var cur in array) {
+        if (array[cur] != null) { 
             return false;
         }
     }
@@ -209,12 +211,10 @@ async function searchGet(e) {
         ans.dog_date = convertDate(ans.dog_date[0]);
     }
     // updating from DB data
-    table_elements[0].innerHTML = ans.comp_name;
-    table_elements[1].innerHTML = ans.comp_inn;
-    table_elements[2].innerHTML = ans.dog_number;
-    table_elements[3].innerHTML = ans.dog_date;
-    table_elements[4].innerHTML = ans.dog_state;
-    table_elements[5].innerHTML = ans.dog_comment;
+    for (var cur in ans) {
+        if (cur == "files" || cur == "id") continue;
+        table_elements[cur].innerHTML = ans[cur];
+    }
     //
     removeAllEventListeners();
     table_edit_btn.innerHTML = "Редактировать";
@@ -252,20 +252,20 @@ function tableEdit() {
 }
 
 function convertTableTextToInput() {
-    for (var i = 0; i<table_elements.length; i++) {
+    for (var cur in table_elements) {
         var inputElement = document.createElement("input");
-        if (table_elements[i].id == "dog_date") {
+        if (table_elements[cur].id == "dog_date") {
             inputElement.type = "date";
             inputElement.required = true;
-            inputElement.value = convertDate(table_elements[i].innerHTML);
+            inputElement.value = convertDate(table_elements[cur].innerHTML);
         }
         else {
             inputElement.type = "text";
             inputElement.className = "data_table_input";
-            inputElement.value = table_elements[i].innerHTML;
+            inputElement.value = table_elements[cur].innerHTML;
         }
-        table_elements[i].innerHTML = "";
-        table_elements[i].appendChild(inputElement);
+        table_elements[cur].innerHTML = "";
+        table_elements[cur].appendChild(inputElement);
     }
     // files
     var files_array = [];
@@ -304,16 +304,16 @@ async function editData() {
     var search_query = search_list.value;	
     var id = search_query.substr(search_query.indexOf('id=') + 3);
     var obj = {
-        data: [],
+        data: {},
         files: []
     };
     var resp;
-    for (var i = 0; i<table_elements.length; i++) {
-        if (table_elements[i].lastElementChild.value) {
-            obj.data[i] = table_elements[i].lastElementChild.value;
+    for (var cur in table_elements) {
+        if (table_elements[cur].lastElementChild.value) {
+            obj.data[cur] = table_elements[cur].lastElementChild.value;
         }   
         else {
-            obj.data[i] = null;
+            obj.data[cur] = null;
         }
     }
     if (checkFullNulledArray(obj.data)) {
@@ -371,14 +371,14 @@ function tableAddData() {
 }
 async function addData() {
     // in first, we writing all text data to db, and uploading files after success
-    var array = [];
+    var array = {};
     var file_uploader = document.getElementById("file_uploader");
-    for (var i = 0; i<table_elements.length; i++) {
-        if (table_elements[i].lastElementChild.value) {
-            array[i] = table_elements[i].lastElementChild.value;
+    for (var cur in table_elements) {
+        if (table_elements[cur].lastElementChild.value) {
+            array[cur] = table_elements[cur].lastElementChild.value;
         }
         else {
-            array[i] = null;
+            array[cur] = null;
         }
     }
     if (checkFullNulledArray(array)) {
