@@ -1,1 +1,6 @@
-server/node_modules
+*.swp
+node_modules
+dbConnect.js
+*.sec
+package-lock.json
+psql.sh

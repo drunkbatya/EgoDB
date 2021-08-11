@@ -1,12 +1,4 @@
-const Pool = require('pg').Pool
-
-const pool = new Pool({
-    user: 'egouser',
-    host: 'localhost',
-    database: 'egodb',
-    password: '9XbMW3flIO0B0FYr8R5y',
-    port: 5432,
-})
+const pool = require('./dbConnect.js');
 
 const getAllData = (request, response) => {
     pool.query('SELECT * FROM data ORDER BY id ASC', (error, results) => {
@@ -34,7 +26,7 @@ const updateData = (request, response) => {
     var ans = {};
     ans.text = "Операция выполнена успешно!";
     pool.query(
-        'UPDATE data SET comp_name = $1, comp_inn = $2, dog_number = $3, dog_date = $4, dog_state = $5, dog_comment = $6 WHERE id = $7', [data.comp_name, data.comp_inn, data.dog_number, data.dog_date, data.dog_state, data.dog_comment, id], (error, results) => {
+        'UPDATE data SET comp_name = $1, comp_inn = $2, comp_ogrn = $3, comp_addr = $4, comp_kpp = $5, dog_number = $6, dog_date = $7, dog_state = $8, dog_comment = $9 WHERE id = $10', [data.comp_name, data.comp_inn, data.comp_ogrn, data.comp_addr, data.comp_kpp, data.dog_number, data.dog_date, data.dog_state, data.dog_comment, id], (error, results) => {
         if (error) {
             throw error
         }
@@ -66,7 +58,11 @@ const addData = (request, response) => {
     const data = request.body;
     var ans = {};
     ans.text = "Операция выполнена успешно!";
-    pool.query('INSERT INTO data (comp_name, comp_inn, dog_number, dog_date, dog_state, dog_comment) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',[data.comp_name, data.comp_inn, data.dog_number, data.dog_date, data.dog_state, data.dog_comment], (error, results) => {
+    pool.query(`
+        INSERT INTO data (comp_name, comp_inn, comp_ogrn, comp_addr, comp_kpp, dog_number, dog_date, dog_state, dog_comment)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        RETURNING id`,
+        [data.comp_name, data.comp_inn, data.comp_ogrn, data.comp_addr, data.comp_kpp, data.dog_number, data.dog_date, data.dog_state, data.dog_comment], (error, results) => {
         if (error) {
             throw error
         }

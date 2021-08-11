@@ -1,0 +1,10 @@
+CREATE TABLE users (
+id serial PRIMARY KEY,
+username TEXT UNIQUE NOT NULL,
+fullname TEXT NOT NULL,
+password TEXT NOT NULL,
+email TEXT UNIQUE,
+created_on TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+last_login TIMESTAMP WITH TIME ZONE,
+ilovecookie TEXT
+);

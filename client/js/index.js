@@ -15,9 +15,12 @@ var egouser_name = document.getElementById("egouser_name");
 var table_elements = {};
 table_elements.comp_name = document.getElementById("comp_name");
 table_elements.comp_inn = document.getElementById("comp_inn");
+table_elements.comp_ogrn = document.getElementById("comp_ogrn");
+table_elements.comp_kpp = document.getElementById("comp_kpp");
 table_elements.dog_number = document.getElementById("dog_number");
 table_elements.dog_date = document.getElementById("dog_date");
 table_elements.dog_state = document.getElementById("dog_state");
+table_elements.comp_addr = document.getElementById("comp_addr");
 table_elements.dog_comment = document.getElementById("dog_comment");
 files_table = document.getElementById("files");
 
@@ -223,16 +226,11 @@ async function searchGet(e) {
         for (i=0; i < ans.files.length; i++) {
             var link = document.createElement("a");
             var brr = document.createElement("br");
-            //var name = ans.files[i].match(/\/(\w+.\w+)$/);
-            //var name = ans.files[i].match(/\/([^\/]+)$/);
-            //if (ans.files[i]) {
-                // regexp will cut file path to file name; name[1] will print regexp group in ();
-                link.innerHTML = ans.files[i];
-                link.href = FILES_PATH+"/"+id+"/"+ans.files[i];
-                link.target = "_blank";
-                files_table.appendChild(link);
-                files_table.appendChild(brr);
-            //}
+            link.innerHTML = ans.files[i];
+            link.href = FILES_PATH+"/"+id+"/"+ans.files[i];
+            link.target = "_blank";
+            files_table.appendChild(link);
+            files_table.appendChild(brr);
         }
     }
     data_table.style.visibility = 'visible';
@@ -342,7 +340,7 @@ async function editData() {
 }
 
 async function deleteData() {
-    var ans = prompt("Бля, ну ты уверен? Если да, то напиши 'ДА'");
+    var ans = prompt("Вы уверены? Если да, то напишите 'ДА'");
     if (ans != "ДА") return;
     var search_query = search_list.value;
     var id = search_query.substr(search_query.indexOf('id=') + 3);
@@ -412,7 +410,7 @@ async function getList() {
     }
 	for (i=0; i < resp.length; i++) {
 		var listElement = document.createElement("option");
-		listElement.value = resp[i].comp_name +" -- "+ resp[i].comp_inn + "                   id="+resp[i].id;
+		listElement.value = resp[i].comp_name +" -- "+ resp[i].comp_inn +" -- "+ resp[i].comp_ogrn +" -- "+ resp[i].dog_number+"  id="+resp[i].id;
 		id_list.appendChild(listElement);
 	}
 }

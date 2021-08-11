@@ -1,13 +1,12 @@
 const express = require('express');
 const morgan = require('morgan');
-const basicAuth = require('express-basic-auth');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const crypto = require("crypto");
 const app = express();
 const port = 80;
-const db = require('./database');
-const ROOT = "/home/drunkbatya/EgoDB/";
+const db = require('./db');
+const path = require('path');
 const FILES_DIR_ROOT = "/opt/EgoDBFiles";
 const multer = require("multer");
 const fs = require('fs');
@@ -38,27 +37,29 @@ app.use(function (req, res, next) {
         var cookie_value = crypto.randomBytes(21).toString('hex');
         res.cookie('egoSession', cookie_value, { httpOnly: true });
     }
-    next();
+    return next();
 });
 
 app.post('/server/login', db.login);
 
 app.get('/login', function(req, res){
-    return res.status(200).sendFile(ROOT+'/client/login.html');
+    return res.status(200).sendFile(path.join(__dirname, '../client/login.html'));
 });
 
 app.get('/favicon.ico', function(req, res){
-    return res.status(200).sendFile(ROOT+'/client/favicon.ico');
+    return res.status(200).sendFile(path.join(__dirname, '../client/favicon.ico'));
 });
 
 app.use(async function (req, res, next) {
     var cookie = req.cookies.egoSession;
-    dbAns = await db.checkCookie(cookie);
-    dbAns = parseInt(dbAns.rows[0].count);
-    if (!dbAns) {
-        return res.status(401).redirect('/login');
+    if (cookie) {
+        var dbAns = await db.checkCookie(cookie);
+        dbAns = parseInt(dbAns.rows[0].count);
+        if (dbAns) {
+            return next();
+        }
     }
-    next();
+    return res.status(401).redirect('/login');
 });
 
 //app.use(morgan('combined'));
@@ -68,9 +69,8 @@ app.use(
         extended: true,
     })
 )
-app.use('/', express.static('client'));
+app.use('/', express.static('../client'));
 app.use('/files', express.static(FILES_DIR_ROOT));
-//app.get('/users', db.getUsersList);
 
 app.get('/server/username/', db.getEgoUserName);
 app.get('/server/:id', db.getAllById);
@@ -81,21 +81,6 @@ app.delete('/server/:id', db.deleteData);
 app.post("/server/files/:id", upload.array("docs"), db.uploadFiles);
 app.post('/server', db.addData);
 
-
 app.listen(port, () => {
     console.log(`App running on port ${port}.`)
 })
-
-async function beginAuth(username, password, cb) {
-    var dbAns = await db.checkValidCredentials(username, password);
-    dbAns = parseInt(dbAns.rows[0].count);
-    if (dbAns) {
-        return cb(null, true);
-    }
-    return cb(null, false);
-}
-function getUnauthorizedResponse(req) {
-    return req.auth
-        ? ('<h1>Бля.. Надо залогиниться</h1>')
-        : ('<h1>Пиздец..</h1>')
-}

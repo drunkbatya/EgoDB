@@ -1,0 +1,16 @@
+#!/usr/bin/node
+
+const pool = require('./dbConnect');
+const crypto = require("crypto");
+
+pool.query(`
+    INSERT INTO users (username, password, email, created_on, last_login, fullname) 
+    VALUES ($1, $2, $3, $4, $5, $6)
+    `, [], (err, res) => {
+    if (err) {
+        throw err;
+    }
+    console.log(res);
+});
+
+// vim: filetype=javascript

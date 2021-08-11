@@ -1,5 +1,0 @@
-config /etc/postgresql/9.5/main
-  data   /var/lib/postgresql/9.5/main
-  locale en_US.UTF-8
-  socket /var/run/postgresql
-  port   5432
