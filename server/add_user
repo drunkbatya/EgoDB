@@ -2,15 +2,29 @@
 
 const pool = require('./dbConnect');
 const crypto = require("crypto");
+const prompt = require('prompt');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
-pool.query(`
-    INSERT INTO users (username, password, email, created_on, last_login, fullname) 
-    VALUES ($1, $2, $3, $4, $5, $6)
-    `, [], (err, res) => {
-    if (err) {
-        throw err;
+prompt.start();
+
+async function main() {
+    var data = await prompt.get(['username', 'fullname', 'password', 'email']);
+    if (!data.password) {
+        console.log("Password isn't specified, generating random..");
+        data.password = crypto.randomBytes(6).toString('base64');
     }
-    console.log(res);
-});
+    data.password = await bcrypt.hash(data.password, saltRounds);
+    var res = await pool.query(`
+        INSERT INTO users (username, fullname, password, email)
+        VALUES ($1, $2, $3, $4)
+    `, [data.username, data.fullname, data.password, data.email]);
+    if (res.rowCount == 1) {
+        console.log("User "+data.username+" added successfully!");
+    }
+    else {
+        console.log("Error!");
+    }
+};
 
-// vim: filetype=javascript
+main();

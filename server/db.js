@@ -1,4 +1,5 @@
 const pool = require('./dbConnect.js');
+const bcrypt = require('bcrypt');
 
 const getAllData = (request, response) => {
     pool.query('SELECT * FROM data ORDER BY id ASC', (error, results) => {
@@ -124,7 +125,7 @@ const logout = (req, res) => {
 }
 
 
-const login = async (req, res) => {
+async function login (req, res) {
     const data = req.body;
     const cookie = req.cookies.egoSession;
     console.log(data);
@@ -132,19 +133,34 @@ const login = async (req, res) => {
         res.status(403).json("Отсутствуют данные.");
         return;
     }
-    var dbAns = await pool.query('SELECT COUNT(*) FROM users WHERE username = $1 AND password = $2', [data.username, data.password]);
-    dbAns = parseInt(dbAns.rows[0].count);
-    if (!dbAns) {
-        res.status(401).json("Введённые данные не верны!");
-        return;
-    }
-    // it's specially replaces old cookie to new, cause this "web-app's" idea doesn't imply manny sessions for one user
-    pool.query('UPDATE users SET ilovecookie = $1 WHERE username = $2', [cookie, data.username], (error, results) => {
-        if (error) {
-            throw error
+    var validUser = await pool.query(`
+        SELECT COUNT(*)
+        FROM users
+        WHERE username = $1
+        `, [data.username]);
+    validUser = parseInt(validUser.rows[0].count);
+    if (validUser) {
+        // i know what this is an unsecure action,
+        // but i need this tio perform a bctypt's compare action
+        var userPasswordHash = await pool.query(`
+            SELECT password
+            FROM users
+            WHERE username = $1
+            `, [data.username]);
+        userPasswordHash = userPasswordHash.rows[0].password;
+        const match = await bcrypt.compare(data.password, userPasswordHash);
+        if (match) {
+            // it's specially replaces old cookie to new, cause
+            // this "web-app's" idea doesn't imply manny sessions for one user
+            pool.query(`
+                UPDATE users
+                SET ilovecookie = $1
+                WHERE username = $2
+                `, [cookie, data.username]);
+            return res.status(200).json("Авторизация выполнена успешно!");
         }
-        res.status(200).json("Авторизация выполнена успешно!");
-    });
+    }
+    return res.status(401).json("Введённые данные не верны!");
 }
 
 module.exports = {
