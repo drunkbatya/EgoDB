@@ -48,7 +48,7 @@ body {
     color: red;
     margin-bottom: 5px;
 }
-#loading {
+#loading_cont {
   position: fixed;
   display: block;
   width: 100%;
@@ -61,12 +61,15 @@ body {
   z-index: 99;
 }
 
-#loading-image {
-  position: absolute;
-  top: 100px;
-  left: 240px;
-  z-index: 100;
+#loading_div {
+    border: 4px dotted black;
+    padding: 12px 100px;
+    width: 17%;
+    margin: auto;
+    margin-top: 10%;
+    font-weight: bold;
 }
+
 #user_info {
     position: absolute;
     top: 25px;

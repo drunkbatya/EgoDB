@@ -9,7 +9,7 @@ var table_edit_btn = document.getElementById("table_edit_btn");
 var stop_edit_btn = document.getElementById("stop_edit_btn");
 var delete_btn = document.getElementById("delete_btn");
 var add_btn = document.getElementById("add_btn");
-var loading = document.getElementById("loading");
+var loading = document.getElementById("loading_cont");
 var egouser_name = document.getElementById("egouser_name");
 //accessing table elements
 var table_elements = {};
