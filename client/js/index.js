@@ -9,6 +9,7 @@ var table_edit_btn = document.getElementById("table_edit_btn");
 var stop_edit_btn = document.getElementById("stop_edit_btn");
 var delete_btn = document.getElementById("delete_btn");
 var add_btn = document.getElementById("add_btn");
+var server_error_msg = document.getElementById("server_error_cont");
 var loading = document.getElementById("loading_cont");
 var egouser_name = document.getElementById("egouser_name");
 //accessing table elements
@@ -26,19 +27,41 @@ files_table = document.getElementById("files");
 
 window.addEventListener('load', setup, false);
 
-
 function disableSearchElements(state) {
     search_list.disabled = state;
     search_btn.disabled = state;
     search_clear_btn.disabled = state;
 }
 
+function checkServer() {
+    var req = new XMLHttpRequest();
+    req.timeout = 1000; // 1s
+    req.onload = function() {
+        if (req.status == 200 && req.responseText == "OK") {
+            server_error_msg.style.display = "none";
+        }
+        else {
+            loading.style.display = "none";
+            server_error_msg.style.display = "block";
+        }
+    }
+    req.ontimeout = function() {
+        loading.style.display = "none";
+        server_error_msg.style.display = "block";
+    }
+    req.onerror = function() {
+        loading.style.display = "none";
+        server_error_msg.style.display = "block";
+    }
+    req.open('GET', '/check', true);
+    req.send();
+}
+    
+
 function backendGet(url) {
 	var req = new XMLHttpRequest();
-    //loading.style.display = "block";
 	return new Promise(function(resolve, reject) {
 		req.onload = function() {
-            //loading.style.display = "none";
 	        var resp = JSON.parse(req.responseText);
 			resolve(resp);
 		}
@@ -49,7 +72,6 @@ function backendGet(url) {
 
 function backendDel(url) {
 	var req = new XMLHttpRequest();
-    //loading.style.display = "block";
 	return new Promise(function(resolve, reject) {
 		req.onload = function() {
             loading.style.display = "none";
@@ -78,8 +100,7 @@ function backendPut(url, array) {
 }
 
 function backendPost(url, array) {
-
-    console.log(array);
+    //console.log(array);
 	var req = new XMLHttpRequest();
     loading.style.display = "block";
 	return new Promise(function(resolve, reject) {
@@ -132,6 +153,8 @@ function setup(e) {
 	getList();
     disableSearchElements(false);
     loading.style.display = "none";
+    server_error_msg.style.display = "none";
+    setInterval(checkServer, 3000);
 
 }
 

@@ -48,7 +48,7 @@ body {
     color: red;
     margin-bottom: 5px;
 }
-#loading_cont {
+#loading_cont, #server_error_cont {
   position: fixed;
   display: block;
   width: 100%;

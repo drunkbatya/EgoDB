@@ -10,6 +10,7 @@ const FILES_DIR_ROOT = "/opt/EgoDBFiles";
 const multer = require("multer");
 const fs = require('fs');
 const log = require('./log');
+const validHostHeader = "db.drunkbatya.com";
 app.use(cookieParser());
 app.use(bodyParser.json());
 
@@ -32,6 +33,14 @@ var storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 app.use(log.accessMorgan);
+
+app.use(function (req, res, next) {
+    var host = req.headers.host;
+    if (host != validHostHeader) {
+        return res.status(444);
+    }
+    return next();
+});
 
 app.use(function (req, res, next) {
     var cookie = req.cookies.egoSession;
@@ -64,6 +73,9 @@ app.use(async function (req, res, next) {
     return res.status(401).redirect('/login');
 });
 
+app.get('/check', function (req, res) {
+    return res.send("OK");
+});
 
 app.use(
     bodyParser.urlencoded({
