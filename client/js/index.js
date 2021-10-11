@@ -1,4 +1,3 @@
-const FILES_PATH = "/files";
 // declaration page objects
 var search_btn = document.getElementById("search_btn");
 var search_сlear_btn = document.getElementById("search_clear_btn");
@@ -250,7 +249,7 @@ async function searchGet(e) {
             var link = document.createElement("a");
             var brr = document.createElement("br");
             link.innerHTML = ans.files[i];
-            link.href = FILES_PATH+"/"+id+"/"+ans.files[i];
+            link.href = "/files/"+id+"/"+encodeURIComponent(ans.files[i]);
             link.target = "_blank";
             files_table.appendChild(link);
             files_table.appendChild(brr);
