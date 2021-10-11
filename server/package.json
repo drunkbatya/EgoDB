@@ -12,7 +12,8 @@
     "nodemon": "^2.0.12",
     "pg": "^8.6.0",
     "pg-native": "^3.0.0",
-    "prompt": "^1.1.0"
+    "prompt": "^1.1.0",
+    "rotating-file-stream": "^2.1.6"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

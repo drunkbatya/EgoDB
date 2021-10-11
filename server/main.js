@@ -1,5 +1,4 @@
 const express = require('express');
-const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const crypto = require("crypto");
@@ -10,6 +9,7 @@ const path = require('path');
 const FILES_DIR_ROOT = "/opt/EgoDBFiles";
 const multer = require("multer");
 const fs = require('fs');
+const log = require('./log');
 app.use(cookieParser());
 app.use(bodyParser.json());
 
@@ -30,6 +30,8 @@ var storage = multer.diskStorage({
     }
 });
 const upload = multer({ storage: storage });
+
+app.use(log.accessMorgan);
 
 app.use(function (req, res, next) {
     var cookie = req.cookies.egoSession;
@@ -62,7 +64,6 @@ app.use(async function (req, res, next) {
     return res.status(401).redirect('/login');
 });
 
-//app.use(morgan('combined'));
 
 app.use(
     bodyParser.urlencoded({
