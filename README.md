@@ -1,5 +1,6 @@
 # EgoDB
-Office document's managemant system.
+Office document management system
+
 Its allow to upload files to server (e.g. scans) and insert some values of docs on table to make search easy.
 
 ## To do
