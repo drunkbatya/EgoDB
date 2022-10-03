@@ -217,7 +217,11 @@ async function searchGet(e) {
 		return;
 	}
     // getting id from text and ask DB for information by id
-    var id = search_query.substr(search_query.indexOf('id=') + 3);
+    if (!search_query.includes("id=") || search_query.split("id=").length != 2 || !search_query.split("id=")[1]) {
+        alert("Указан неверный поисковый запрос! Следует использовать элементы из выпадающего списка");
+        return;
+    }
+    var id = search_query.split("id=")[1];
     if (!id) {
         alert("То, что вы ищете, не сущетствует, либо произошел сбой в матрице");
         return;
