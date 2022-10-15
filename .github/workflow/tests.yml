@@ -1,0 +1,17 @@
+name: 'API Tests'
+on:
+  push:
+    branches:
+        - 'greggid/ci-cd-tests'
+    tags:
+      - '*'
+  pull_request:
+
+
+jobs:
+  host-test:
+    runs-on:  ubuntu-latest
+     steps:
+      - name: 'host-test'
+        run: |
+            ./autotest1.py
