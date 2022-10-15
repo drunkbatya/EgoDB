@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# copyright 2022
+
 import requests
 import time
 import sys
