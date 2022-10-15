@@ -9,7 +9,6 @@ on:
 jobs:
   host-test:
     runs-on: ubuntu-latest
-        python-version: [ 3.x ]
     steps:
       - name: clone rep
       - uses: actions/checkout@v3
