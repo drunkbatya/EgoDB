@@ -12,4 +12,4 @@ jobs:
     steps:
       - name: 'host-test'
         run: |
-            ./autotest1.py
+            ../../tests/autotest1.py
