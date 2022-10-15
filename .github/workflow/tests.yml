@@ -2,7 +2,7 @@ name: 'API Tests'
 on:
   push:
     branches:
-        - 'greggid/ci-cd-tests'
+      - "greggid/ci-cd-tests"
     tags:
       - '*'
   pull_request:
