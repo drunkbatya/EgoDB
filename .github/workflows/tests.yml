@@ -13,6 +13,6 @@ jobs:
       - name: clone rep
       - uses: actions/checkout@v3
       - name: Statrt autotest
-          run: |python3
-            ../../tests/autotest1.py
+          run: |
+           python3 ../../tests/autotest1.py
 
