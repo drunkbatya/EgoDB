@@ -9,7 +9,7 @@ on:
 jobs:
   host-test:
     runs-on: ubuntu-latest
-     steps:
-       - name: 'host-test'
-         run: |
+    steps:
+      - name: 'host-test'
+        run: |
             ./autotest1.py
