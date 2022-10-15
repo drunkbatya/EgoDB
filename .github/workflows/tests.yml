@@ -10,10 +10,10 @@ on:
 jobs:
   host-test:
     runs-on: ubuntu-latest
+
     steps:
       - name: "clone rep"
-      - uses: actions/checkout@v3
+        uses: actions/checkout@v3
       - name: "Start autotest"
-          run: |
-            python3 ../../tests/autotest1.py
+        run: python3 ../../tests/autotest1.py
 
