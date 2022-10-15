@@ -15,5 +15,5 @@ jobs:
       - name: "clone rep"
         uses: actions/checkout@v3
       - name: "Start autotest"
-        run: python3 ./autotest1.py
+        run: python3 tests/autotest1.py
 
