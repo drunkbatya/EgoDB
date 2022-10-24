@@ -6,7 +6,7 @@ import os
 print("start checking response to request with invalid host header")
 try:
     response = requests.get("https://db.drunkbatya.com", headers = {"host": "WRONG_HOST"}, timeout = 1)
-    print(Test n1 crashed)
+    print("Test n1 crashed")
     sys.exit(1)
 except requests.exceptions.ReadTimeout:
     next
@@ -22,7 +22,7 @@ response = requests.post("https://db.drunkbatya.com/server/login", data = {"secr
 if "egoSession" in response.cookies:
     next
 else:
-    print(Test n2 crashed)
+    print("Test n2 crashed")
     sys.exit(1)
 
 
