@@ -14,7 +14,7 @@ jobs:
 
     steps:
       - name: "Cloning repository"
-        uses:  actions/checkout@v3
+        uses: actions/checkout@v3
       - name: "Start check response to request with invalid host header"
          env: 
               username: ${{ secrets.WEBUI_TESTING_LOGIN }} 
