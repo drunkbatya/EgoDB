@@ -6,14 +6,15 @@ on:
   push:
     branches:
       - "greggid/ci-cd-tests"
+      - "master"
 
 jobs:
   host-test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: "clone rep"
+      - name: "Cloning repository"
         uses: actions/checkout@v3
-      - name: "Start autotest"
-        run: python3 tests/autotest1.py
+      - name: "Start check response to request with invalid host header"
+        run: python3 tests/autotest1.py --value=${{ secrets.WEBUI_TESTING_LOGIN }} ${{ secrets.WEBUI_TESTING_PASS }}
 
