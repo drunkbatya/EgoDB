@@ -21,12 +21,12 @@ jobs:
 
           pip install black
 
-        name: "check syntaxis on flake8"
+      - name: "check syntaxis on flake8"
         run: |
 
           flake8
 
-        name: "check syntaxis on black"
+      - name: "check syntaxis on black"
         run: |
 
            -- check back
