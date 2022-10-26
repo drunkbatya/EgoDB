@@ -21,8 +21,8 @@ jobs:
 
       - name: "check syntaxis on flake8"
         run: |
-          flake8 --ignor=E501 *.py
+          flake8 --ignor=E501 tests/*.py
 
       - name: "check syntaxis on black"
         run: |
-          black --check *.py
+          black --check tests/*.py
