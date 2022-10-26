@@ -14,9 +14,9 @@ jobs:
       - name: "Cloning repository"
         uses: actions/checkout@v3
 
-      - name: "Start check response to request with invalid host header"
+      - name: "Checking invalid host header"
         env: 
-          username: ${{ secrets.WEBUI_TESTING_LOGIN }} 
-          password: ${{ secrets.WEBUI_TESTING_PASS }}
+          USERNAME: ${{ secrets.WEBUI_TESTING_LOGIN }} 
+          PASSWORD: ${{ secrets.WEBUI_TESTING_PASS }}
         run: python3 tests/autotest1.py 
 

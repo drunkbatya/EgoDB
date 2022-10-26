@@ -12,21 +12,17 @@ jobs:
     steps:
       - name: "Clone reprisetory"
         uses: actions/checkout@v3
-      - name: "download flake8"
-        run: |
         
-          python -m pip install --upgrade pip 
-
-          pip install flake8
-
-          pip install black
+      - name: "download flake8"
+        run: | 
+          python3 -m pip install --upgrade pip 
+          python3 -m pip install flake8
+          python3 -m pip install black
 
       - name: "check syntaxis on flake8"
         run: |
-
-          flake8
+          flake8 --ignor=E501 *.py
 
       - name: "check syntaxis on black"
         run: |
-
-           -- check back
+          black --check *.py
