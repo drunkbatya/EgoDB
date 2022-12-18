@@ -1,0 +1,28 @@
+name: 'Python-Lint'
+
+on:
+  push:
+    branches:
+      - "master"
+  pull_request: 
+
+jobs:
+  lint_python:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Clone reprisetory"
+        uses: actions/checkout@v3
+        
+      - name: "download flake8"
+        run: | 
+          python3 -m pip install --upgrade pip 
+          python3 -m pip install flake8
+          python3 -m pip install black
+
+      - name: "check syntaxis on flake8"
+        run: |
+          flake8 --ignor=E501 tests/*.py
+
+      - name: "check syntaxis on black"
+        run: |
+          black --check tests/*.py
